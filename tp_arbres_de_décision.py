@@ -220,3 +220,39 @@ plt.xlabel('Max depth')
 plt.ylabel('Accuracy Score')
 plt.title("Testing error")
 print(scores_entropy)
+
+
+
+# Question complete
+
+n_test=40
+data_test =rand_checkers(n_test, n_test, n_test, n_test, sigma)
+X_test= data_test[:, :2]
+Y_test= data_test[:, 2].astype(int) 
+dmax = 12
+scores_entropy = np.zeros(dmax)
+scores_gini = np.zeros(dmax)
+plt.figure(figsize=(15, 10))
+
+for i in range(dmax):
+    dt_entropy = tree.DecisionTreeClassifier(criterion='entropy', max_depth=i + 1)
+    dt_entropy.fit(X, Y)
+    scores_entropy[i] = dt_entropy.score(X_test, Y_test)
+
+    dt_gini = tree.DecisionTreeClassifier(criterion='entropy', max_depth=i + 1)
+    dt_gini.fit(X, Y)
+    scores_gini[i] = dt_gini.score(X_test, Y_test)
+
+    plt.subplot(3, 4, i + 1)
+    frontiere(lambda x: dt_entropy.predict(x.reshape((1, -1))), X, Y, step=50)
+plt.draw()
+
+#%%
+plt.figure()
+plt.plot(np.arange(1, dmax + 1), scores_entropy)
+plt.plot(np.arange(1, dmax + 1), scores_gini)
+
+plt.xlabel('Max depth')
+plt.ylabel('Accuracy Score')
+plt.title("Testing error")
+print(scores_entropy)
