@@ -5,7 +5,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib import rc
-import graphviz 
+import graphviz
+from sklearn import datasets
+
 from sklearn.tree import DecisionTreeClassifier
 # Ajouter un chemin d'accès à sys.path
 sys.path.append(r"C:\Users\Abdoulaye Diop\Desktop\TP2_AS\TP - arbres-20221006")
@@ -165,7 +167,7 @@ print("Scores with Gini criterion: ", scores_gini)
 # obtenues avec l’entropie
 
 # dt_entropy.max_depth = ... TODO
-
+# recuperation de l'indice(profondeur maximale qui maximise l'score)
 dt_entropy.max_depth = np.argmax(scores_entropy) + 1
 dt_entropy.fit(X, Y)
 
@@ -181,6 +183,7 @@ print("Best scores with entropy criterion: ", dt_entropy.score(X, Y))
 # Voir https://scikit-learn.org/stable/modules/tree.html#classification
 
 # TODO
+# le graphe ainsi  obtenu est noté arbre dans le fichier DATA
 tree.plot_tree(dt_entropy)
 import graphviz 
 dot_data = tree.export_graphviz(dt_entropy, out_file=None) 
@@ -256,3 +259,46 @@ plt.xlabel('Max depth')
 plt.ylabel('Accuracy Score')
 plt.title("Testing error")
 print(scores_entropy)
+
+
+# Question 6
+
+digits = datasets.load_digits()
+
+
+
+n_samples = len(digits.data)
+# use test_train_split rather.
+
+X = digits.data[:n_samples // 2]  # digits.images.reshape((n_samples, -1))
+# Y = digits.target[:n_samples // 2]
+X_test= data_test[:, :2]
+Y_test= data_test[:, 2].astype(int) 
+
+# Question 7
+
+
+ent_sc = []
+gini_sc= []
+
+for depth in range(1, 13):
+    dt = tree.DecisionTreeClassifier(criterion='entropy', max_depth=depth)
+    acc = cross_val_score(dt, X_train, Y_train, cv=5, n_jobs=-1)
+    ent_sc.mean()
+
+    dt = tree.DecisionTreeClassifier(criterion='gini', max_depth=depth)
+    acc = cross_val_score(dt, X_train, Y_train, cv=5, n_jobs=-1)
+    gini_sc.mean()
+
+
+plt.figure(figsize=(10, 6))
+plt.plot(range(1, 12), ent_sc, label="entropy")
+plt.plot(range(1, 12), gini_sc, label="gini")
+plt.xlabel('Pronfondeur')
+plt.ylabel("Score")
+plt.legend()
+plt.title(""" Cross Validation K_Fold avec K=5""")
+plt.show()
+
+dt_cv = tree.DecisionTreeClassifier(criterion='entropy', max_depth=np.argmin(ent_sc) + 1) 
+dt_cv.fit(X_test, Y_test)
